@@ -1,5 +1,6 @@
 const NodeHelper = require("node_helper");
-const ical = require("ical-generator");
+const ical = require("ical-generator").default || require("ical-generator");
+console.log("ical module type:", typeof ical); // Should now output 'function'
 const path = require("path");
 
 module.exports = NodeHelper.create({
@@ -25,6 +26,7 @@ module.exports = NodeHelper.create({
                 domain: "localhost",
                 name: "MagicMirror",
             });
+            console.log("Calendar instance:", cal);
 
             // Validate eventData
             if (!eventData.title || !eventData.date || !eventData.time) {
