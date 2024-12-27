@@ -11,27 +11,42 @@ module.exports = NodeHelper.create({
         if (notification === "SETUP_CALENDAR") {
             this.calendarPath = path.resolve(__dirname, payload.calendarFile);
         } else if (notification === "ADD_EVENT") {
-            this.addEventToCalendar(payload);
+            this.addEventToCalendar(payload).catch((err) => {
+                console.error("Error adding event to calendar:", err);
+                this.sendSocketNotification("EVENT_ADD_ERROR", err.message);
+            });
         }
     },
 
-    addEventToCalendar: function (eventData) {
-        const cal = ical({
-            domain: "localhost",
-            name: "MagicMirror",
-        });
+    async addEventToCalendar(eventData) {
+        try {
+            const cal = ical({
+                domain: "localhost",
+                name: "MagicMirror",
+            });
 
-        cal.createEvent({
-            start: new Date(`${eventData.date}T${eventData.time}`),
-            summary: eventData.title,
-        });
+            // Create the event
+            cal.createEvent({
+                start: new Date(`${eventData.date}T${eventData.time}`),
+                summary: eventData.title,
+            });
 
-        cal.save(this.calendarPath, (err) => {
-            if (err) {
-                console.error("Failed to save calendar:", err);
-            } else {
-                this.sendSocketNotification("EVENT_ADDED", eventData);
-            }
-        });
+            // Save the calendar to the file
+            await new Promise((resolve, reject) => {
+                cal.save(this.calendarPath, (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+
+            // Notify the frontend that the event was added
+            this.sendSocketNotification("EVENT_ADDED", eventData);
+        } catch (err) {
+            console.error("Failed to add event:", err);
+            throw err;
+        }
     },
 });
