@@ -1,0 +1,23 @@
+.calendar-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.calendar-form input {
+    margin: 5px;
+    padding: 10px;
+    font-size: 1em;
+}
+
+.calendar-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.calendar-form button:hover {
+    background-color: #0056b3;
+}
