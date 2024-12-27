@@ -1,2 +1,2 @@
-# MMM-CalendarForm.js
+# MMM-CalendarForm
 Calendar form for Magic Mirror first attempt
