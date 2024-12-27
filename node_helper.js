@@ -1,5 +1,12 @@
 const NodeHelper = require("node_helper");
-const ical = require("ical-generator");
+
+let ical;
+try {
+    ical = require("ical-generator");
+} catch (error) {
+    console.error("Failed to load ical-generator module:", error);
+    throw error;
+}
 const path = require("path");
 
 module.exports = NodeHelper.create({
