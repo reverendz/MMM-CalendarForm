@@ -20,41 +20,30 @@ module.exports = NodeHelper.create({
     },
 
     async addEventToCalendar(eventData) {
-        try {
-            // Create a new calendar instance
-            const cal = ical({
-                domain: "localhost",
-                name: "MagicMirror",
-            });
-            console.log("Calendar instance:", cal);
+    try {
+        // Create a calendar instance
+        const cal = ical({
+            domain: "localhost",
+            name: "MagicMirror",
+        });
 
-            // Validate eventData
-            if (!eventData.title || !eventData.date || !eventData.time) {
-                throw new Error("Missing event data fields (title, date, time)");
-            }
+        // Add the event to the calendar
+        cal.createEvent({
+            start: new Date(`${eventData.date}T${eventData.time}`),
+            summary: eventData.title,
+        });
 
-            // Create an event in the calendar
-            cal.createEvent({
-                start: new Date(`${eventData.date}T${eventData.time}`),
-                summary: eventData.title,
-            });
+        // Generate the .ics file content
+        const icsContent = cal.toString();
 
-            // Save the calendar to a file
-            await new Promise((resolve, reject) => {
-                cal.save(this.calendarPath, (err) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                });
-            });
+        // Write the .ics content to a file
+        fs.writeFileSync(this.calendarPath, icsContent, 'utf-8');
 
-            // Notify the frontend that the event was successfully added
-            this.sendSocketNotification("EVENT_ADDED", eventData);
+        // Notify frontend that the event was added successfully
+        this.sendSocketNotification("EVENT_ADDED", eventData);
         } catch (err) {
-            console.error("Error in addEventToCalendar:", err);
-            throw err;
+        console.error("Error adding event:", err);
+        this.sendSocketNotification("EVENT_ADD_ERROR", err.message);
         }
     },
 });
