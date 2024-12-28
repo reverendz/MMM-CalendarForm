@@ -26,12 +26,12 @@ module.exports = NodeHelper.create({
 
             console.log("Saving event to calendar at:", calendarPath);
 
-            // Load the existing calendar if it exists
+            // Initialize the calendar
             let cal;
             if (fs.existsSync(calendarPath)) {
                 const existingData = fs.readFileSync(calendarPath, "utf-8");
                 cal = ical({ domain: "localhost", name: "MagicMirror" });
-                cal.data(existingData); // Load existing events
+                cal.data(existingData); // Load existing calendar data
             } else {
                 cal = ical({ domain: "localhost", name: "MagicMirror" });
             }
@@ -42,7 +42,7 @@ module.exports = NodeHelper.create({
                 summary: eventData.title,
             });
 
-            // Save the updated calendar file
+            // Save the updated calendar to the file
             fs.writeFileSync(calendarPath, cal.toString(), "utf-8");
 
             console.log("Event successfully added to the calendar.");
