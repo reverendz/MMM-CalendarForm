@@ -9,15 +9,18 @@ module.exports = NodeHelper.create({
     },
 
     socketNotificationReceived: function (notification, payload) {
-        if (notification === "ADD_EVENT") {
+        if (notification === "SET_CONFIG") {
+            this.config = payload; // Store the config from the frontend
+            console.log("Configuration received:", this.config);
+        } else if (notification === "ADD_EVENT") {
             this.addEventToCalendar(payload);
         }
     },
 
     async addEventToCalendar(eventData) {
         try {
-            // Get the calendar path from the config.js
-            const calendarPath = this.config.calendarPath;
+            // Get the calendar path from the config
+            const calendarPath = this.config?.calendarPath;
 
             if (!calendarPath) {
                 throw new Error("Calendar path is not specified in config.js");
