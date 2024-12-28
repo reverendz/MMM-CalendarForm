@@ -1,5 +1,6 @@
 const fs = require("fs");
-const ical = require("ical-generator");
+const icalGenerator = require("ical-generator").default || require("ical-generator");
+const icalParser = require("ical");
 const NodeHelper = require("node_helper");
 
 module.exports = NodeHelper.create({
@@ -27,16 +28,28 @@ module.exports = NodeHelper.create({
             console.log("Saving event to calendar at:", calendarPath);
 
             // Initialize the calendar
-            let cal;
+            let cal = icalGenerator({ domain: "localhost", name: "MagicMirror" });
+
+            // If the file exists, parse the existing events and add them
             if (fs.existsSync(calendarPath)) {
                 const existingData = fs.readFileSync(calendarPath, "utf-8");
-                cal = ical({ domain: "localhost", name: "MagicMirror" });
-                cal.data(existingData); // Load existing calendar data
-            } else {
-                cal = ical({ domain: "localhost", name: "MagicMirror" });
+                const parsedEvents = icalParser.parseICS(existingData);
+
+                for (const key in parsedEvents) {
+                    const event = parsedEvents[key];
+                    if (event.type === "VEVENT") {
+                        cal.createEvent({
+                            start: event.start,
+                            end: event.end,
+                            summary: event.summary,
+                            description: event.description,
+                            location: event.location,
+                        });
+                    }
+                }
             }
 
-            // Add the event to the calendar
+            // Add the new event to the calendar
             cal.createEvent({
                 start: new Date(`${eventData.date}T${eventData.time}`),
                 summary: eventData.title,
