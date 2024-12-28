@@ -1,6 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-const ical = require('ical-generator');
+const fs = require("fs");
+const ical = require("ical-generator");
 const NodeHelper = require("node_helper");
 
 module.exports = NodeHelper.create({
@@ -17,9 +16,8 @@ module.exports = NodeHelper.create({
         }
     },
 
-    async addEventToCalendar(eventData) {
+    addEventToCalendar: function (eventData) {
         try {
-            // Get the calendar path from the config
             const calendarPath = this.config?.calendarPath;
 
             if (!calendarPath) {
@@ -31,9 +29,9 @@ module.exports = NodeHelper.create({
             // Load the existing calendar if it exists
             let cal;
             if (fs.existsSync(calendarPath)) {
-                const existingData = fs.readFileSync(calendarPath, 'utf-8');
+                const existingData = fs.readFileSync(calendarPath, "utf-8");
                 cal = ical({ domain: "localhost", name: "MagicMirror" });
-                cal.events(ical.parseICS(existingData));
+                cal.data(existingData); // Load existing events
             } else {
                 cal = ical({ domain: "localhost", name: "MagicMirror" });
             }
@@ -44,11 +42,8 @@ module.exports = NodeHelper.create({
                 summary: eventData.title,
             });
 
-            // Generate the updated .ics content
-            const icsContent = cal.toString();
-
             // Save the updated calendar file
-            fs.writeFileSync(calendarPath, icsContent, 'utf-8');
+            fs.writeFileSync(calendarPath, cal.toString(), "utf-8");
 
             console.log("Event successfully added to the calendar.");
 
@@ -58,5 +53,5 @@ module.exports = NodeHelper.create({
             console.error("Error adding event:", err);
             this.sendSocketNotification("EVENT_ADD_ERROR", err.message);
         }
-    }
+    },
 });
