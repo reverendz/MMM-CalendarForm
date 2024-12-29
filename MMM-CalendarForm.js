@@ -12,10 +12,10 @@ Module.register("MMM-CalendarForm", {
         // Create the main container
         const wrapper = document.createElement("div");
 
-        // Title for the form
-        const title = document.createElement("h2");
-        title.textContent = "Add Event to Calendar";
-        wrapper.appendChild(title);
+        // Title for the form - Commented out
+       // const title = document.createElement("h2");
+       // title.textContent = "Add Event to Calendar";
+       // wrapper.appendChild(title);
 
         // Input for the event title
         const titleInput = document.createElement("input");
@@ -25,7 +25,7 @@ Module.register("MMM-CalendarForm", {
         wrapper.appendChild(titleInput);
 
         // Line break
-        wrapper.appendChild(document.createElement("br"));
+       // wrapper.appendChild(document.createElement("br"));
 
         // Input for the event date
         const dateInput = document.createElement("input");
@@ -34,7 +34,7 @@ Module.register("MMM-CalendarForm", {
         wrapper.appendChild(dateInput);
 
         // Line break
-        wrapper.appendChild(document.createElement("br"));
+        //wrapper.appendChild(document.createElement("br"));
 
         // Input for the event time
         const timeInput = document.createElement("input");
@@ -43,7 +43,7 @@ Module.register("MMM-CalendarForm", {
         wrapper.appendChild(timeInput);
 
         // Line break
-        wrapper.appendChild(document.createElement("br"));
+        //wrapper.appendChild(document.createElement("br"));
 
         // Button to add the event
         const addButton = document.createElement("button");
